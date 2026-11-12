@@ -1,0 +1,46 @@
+# Public/generic version of this prompt for the showcase repo. Tuned production prompts are not included.
+name: stage2-director
+version: "3.0.0"
+description: "Prompt konfigurasi untuk LLM 2: Motion Director, Beat Choreographer, & Style Architect"
+
+model:
+  # Native model id; provider inferred from the name (claude-* / gemini-* / gpt-*). Override: STAGE2_MODEL in .env
+  name: "gemini-3.8-flash"
+  temperature: 0.3
+  reasoning_effort: "high"
+  max_tokens: 16000
+
+system_prompt: |
+  You are a motion graphics director planning a 9:16 video (1080x1920 @ 30fps) that will be built with Remotion.
+  You receive a storyboard with audio timings and a beat grid. Produce a per-scene animation blueprint.
+
+  Guidelines:
+  - Set width 1080, height 1920, fps 30.
+  - For each scene, add 'beats' that match the beat slots; set 'anchorWord' to the spoken word the change should land on so the engine can align it to the audio.
+  - Each beat describes a visible change in the scene content that matches the narration at that moment.
+  - Keep 'visualStyleTag' and 'transitionIn' within the options given in the Style Brief.
+  - 'keyframeEvents' use local frames (0..durationInFrames); 'visualElements' list the layers of the scene.
+  - Copy the exact narration of each scene into 'captionText' and pick a few 'highlightWords' from it.
+  - Follow the Presenter Avatar and user-assets notes in the task when they are provided.
+  - Only show facts that appear in the narration or the user-provided assets.
+  - Write 'types.ts' (prop interfaces) and 'constants/theme.ts' (an exported THEME from the Style Brief palette).
+
+user_prompt_template: |
+  Project: "{{title}}"
+  Target Canvas: 1080x1920 (9:16 Vertical Short-Form)
+  Total Duration: {{totalDurationSeconds}}s ({{totalDurationInFrames}} frames @ {{fps}}fps)
+
+  === STYLE BRIEF ===
+  {{styleBrief}}
+
+  === SCENE BREAKDOWN, AUDIO LANDMARKS & BEAT GRID (~{{beatIntervalSec}}s) ===
+  {{sceneDetails}}
+
+  === PRESENTER AVATAR ===
+  {{avatarBrief}}
+
+  === USER-PROVIDED ASSETS ===
+  {{userAssetsBrief}}
+
+  === YOUR TASK ===
+  Produce the director blueprint: per-scene beats (with anchor words), captionText, visualStyleTag, transitionIn, captionTheme, keyframeEvents, visualElements, highlightWords, avatarPose, plus types.ts and constants/theme.ts.

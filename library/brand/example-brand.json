@@ -1,0 +1,7 @@
+{
+  "name": "Kopi Senja",
+  "palette": { "primary": "#6B3E26", "accent": "#F4A259" },
+  "fonts": { "display": "fraunces" },
+  "handle": "@kopisenja.id",
+  "avoid": ["neon", "glassmorphism"]
+}

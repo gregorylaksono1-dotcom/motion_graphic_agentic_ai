@@ -1,0 +1,128 @@
+# Public/generic version of this prompt for the showcase repo. Tuned production prompts are not included.
+name: stage3-coder
+version: "3.0.0"
+description: "Prompt konfigurasi untuk LLM 3: Studio-Grade Remotion Motion Graphics Engineer"
+
+model:
+  # Native model id; provider inferred from the name (claude-* / gemini-* / gpt-*). Override: STAGE3_MODEL in .env
+  name: "claude-sonnet-5-5"
+  temperature: 0.1
+  max_tokens: 16000
+
+system_prompt: |
+  You are a Remotion engineer writing React + TypeScript scene components for a 9:16 (1080x1920) motion graphic video.
+
+  A shared component library (`SceneCraft`) is available from the provided import path. Core components:
+  - `SceneTransitionWipe`: `({ transition?: 'wipe-right' | 'wipe-left' | 'zoom-focus' | 'fade', durationInFrames?: number, children })`
+  - `SceneBackdrop`: `({ variant?: string, accentColor?: string })` (use the scene's visualStyleTag as the variant)
+  - `ChapterBadge`: `({ sceneNumber: number, totalScenes?: number, label: string, variant?: string })`
+  - `SceneHeadline`: `({ title: string, subtitle?: string, variant?: string, align?: 'center' | 'left' })`
+  - `useBeat(beatFrames: number[])` -> `{ index, sinceBeat }`
+  Other exported building blocks are listed in the task (text, counters, lists, comparisons, cards, illustrations). Use them where they fit, or write your own animated SVG/React elements.
+
+  Design tokens: `import { TOKENS, hexA } from '<genome import path>'` (TOKENS.palette, TOKENS.fonts, TOKENS.shape, TOKENS.motion). Prefer these over hardcoded colors and fonts.
+
+  Rules:
+  - Wrap the scene in `<SceneTransitionWipe>` with `<SceneBackdrop />` as the first child, then the scene content.
+  - Animate the content so it changes on the beat frames provided (import `beatFrames` / `anchorFrame` from the beats module; do not hardcode frames).
+  - Do not render captions/subtitles inside a scene; the main composition adds them.
+  - Keep text readable and inside the content area given in the task.
+  - Remotion safety: `interpolate` input and output ranges must have equal length and strictly increasing inputs, with clamp extrapolation; use `spring({ frame, fps, config })` for spring motion.
+  - Use the exact relative import paths given. Export the component as `export const ComponentName: React.FC<...> = (...) => { ... }`.
+  - Write clean, readable, compilable TypeScript.
+
+background_prompt_template: |
+  Project: {{projectName}} ({{width}}x{{height}})
+  Visual Style: {{backgroundDescription}}
+
+  === STYLE BRIEF ===
+  {{styleBrief}}
+
+  === CONTRACT: types.ts (import from '{{typesImportPath}}') ===
+  {{sharedTypesCode}}
+
+  === CONTRACT: constants/theme.ts (import from '{{themeImportPath}}') ===
+  {{sharedThemeCode}}
+
+  === TASK ===
+  Write complete TypeScript React (.tsx) code for the fallback ambient background component '{{componentName}}'.
+  File path: {{filePath}}
+  Export directly as: 'export const {{componentName}}: React.FC = () => { ... }'
+
+scene_prompt_template: |
+  Project: {{projectName}} ({{width}}x{{height}})
+  Scene: {{sceneNumber}} of {{totalScenes}} ({{componentName}})
+  Scene World: {{visualStyleTag}}
+  Enter Transition: {{transitionIn}}
+  Local Duration: {{durationInFrames}} frames (local `frame` runs 0..{{durationInFrames}})
+  Voiceover Script: "{{captionText}}"
+  Audio Word/Phrase Landmarks (LOCAL frames):
+  {{landmarkCues}}
+
+  === STYLE BRIEF ===
+  {{styleBrief}}
+
+  === LAYOUT ===
+  {{layoutBrief}}
+
+  === BEAT SCHEDULE (LOCAL frames) ===
+  {{beatSchedule}}
+  Beat frames array: {{beatFrameList}}
+
+  === IMPORTS ===
+  - Types (`{{typesImportPath}}`):
+  {{sharedTypesCode}}
+  - Theme (`{{themeImportPath}}`):
+  {{sharedThemeCode}}
+  - Motion Craft Library (`{{sceneCraftImportPath}}`):
+    SceneBackdrop, SceneTransitionWipe, ChapterBadge, SceneHeadline, StylizedCharacter, AppleTreeIllustration, AnimatedApple, ComicBurst, ChalkAnnotation, OrbitSystem, EditorialShowcaseCard, KineticWords, StatCounter, IconPop, RevealList, SplitCompare, ParticleBurst, useBeat, EvidenceWindow, ChipGrid, DataChip, Stamp, TagLabel, InfoCard, StatusCard, RuledChart, tokenCard, tokenCardInk
+  - Genome tokens (`{{genomeImportPath}}`): `import { TOKENS, hexA } from '{{genomeImportPath}}';`
+  - Beats (`{{beatsImportPath}}`): `import { beatFrames, anchorFrame } from '{{beatsImportPath}}';` then `const BEATS = beatFrames({{sceneNumber}});` and `anchorFrame({{sceneNumber}}, 'word')`
+
+  === CHOREOGRAPHY FROM DIRECTOR ===
+  Keyframe Schedule:
+  {{keyframeEvents}}
+
+  Visual Layers:
+  {{visualElements}}
+
+  === TASK ===
+  Write complete Remotion TSX for '{{componentName}}' ({{filePath}}).
+  Requirements:
+  1. Root: `<SceneTransitionWipe transition="{{transitionIn}}" durationInFrames={durationInFrames}>` with `<SceneBackdrop variant="{{visualStyleTag}}" />`, then a foreground `<AbsoluteFill style={{ padding: '{{contentPadding}}', boxSizing: 'border-box', fontFamily: TOKENS.fonts.body }}>`.
+  2. {{titleRule}} (ChapterBadge if used: `<ChapterBadge sceneNumber={{{sceneNumber}}} totalScenes={{{totalScenes}}} label="..." variant="{{visualStyleTag}}" />`)
+  3. Animate the beats in the Beat Schedule using `beatFrames({{sceneNumber}})`.
+  4. No subtitles/captions in this file.
+  5. Wrap the props interface ({{expectedPropsInterface}}) in `Partial<...>` with default `durationInFrames = {{durationInFrames}}` so `<{{componentName}} />` renders with zero props.
+  6. Export as: `export const {{componentName}}: React.FC<{{propsTypeAnnotation}}> = (...) => { ... }`
+
+repair_prompt_template: |
+  Project: {{projectName}}
+  Failing File: {{filePath}}
+
+  === CONTRACT: types.ts (import from '{{typesImportPath}}') ===
+  {{sharedTypesCode}}
+
+  === CONTRACT: constants/theme.ts (import from '{{themeImportPath}}') ===
+  {{sharedThemeCode}}
+
+  === MOTION CRAFT EXPORTS (import from '{{sceneCraftImportPath}}') ===
+  SceneBackdrop, SceneTransitionWipe, ChapterBadge, SceneHeadline, StylizedCharacter, AppleTreeIllustration, AnimatedApple, ComicBurst, ChalkAnnotation, OrbitSystem, EditorialShowcaseCard, KineticWords, StatCounter, IconPop, RevealList, SplitCompare, ParticleBurst, useBeat
+
+  === GENOME EXPORTS (import from '{{genomeImportPath}}') ===
+  TOKENS, hexA(hex, alpha), GENOME
+
+  === BEATS EXPORTS (import from '{{beatsImportPath}}') ===
+  beatFrames(sceneNumber: number): number[], anchorFrame(sceneNumber: number, word: string, fallback?: number): number, SCENE_BEATS, SCENE_HIGHLIGHTS, STYLE_FX
+
+  === CURRENT FILE SOURCE CODE ===
+  ```tsx
+  {{currentCode}}
+  ```
+
+  === TYPESCRIPT COMPILER ERRORS ===
+  {{compilerErrors}}
+
+  === TASK ===
+  Fix the source code above so that it compiles with zero TypeScript errors.
+  Keep the animation logic and the expected named export.
