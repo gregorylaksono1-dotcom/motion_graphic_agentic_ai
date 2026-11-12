@@ -13,6 +13,10 @@ Each video below was generated from a single text input.
 | 1 | *"what is gravitation? and how does it work? explain like I'm a 6 years old kid"* | https://github.com/user-attachments/assets/c830f20f-eba3-40d6-b935-e970fd083c51 |
 | 2 | *"is EV worth buying ? make the video using minimalist elegant style"* | https://github.com/user-attachments/assets/3db6c7eb-2cff-4fe8-a8d9-9b342beac8b6 |
 | 3 | *"How to build a house on a hill. Explain it in step-by-step"* | https://github.com/user-attachments/assets/7e7415ec-f888-4b6f-be30-a211ac3f977e |
+| 4 | *"Why am I always feeling tired after high carbo meals explain it in step-by-step, use avatar and use neo-brutalism style"* | https://github.com/user-attachments/assets/89095a33-e56b-46fb-aa13-5cc86b4fe33b
+
+
+
 
 ---
 
