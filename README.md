@@ -4,7 +4,20 @@ An Agentic AI project built with **Node.js (TypeScript)** and **LangChain.js** u
 
 > **Showcase version note:** this repo demonstrates the engine architecture and code. The LLM prompts in `prompts/*.yml` are intentionally generic (not production-tuned prompts), and all data in the demos is fictional. LLMs are called directly via their native providers (Anthropic / Google / OpenAI / OpenRouter / Ollama).
 
+## 🎬 Demo
+
+Each video below was generated from a single text input.
+
+| # | User input | Video |
+|---|---|---|
+| 1 | *"what is gravitation? and how does it work? explain like I'm a 6 years old kid"* | https://github.com/user-attachments/assets/c830f20f-eba3-40d6-b935-e970fd083c51 |
+| 2 | *"is EV worth buying ? make the video using minimalist elegant style"* | https://github.com/user-attachments/assets/3db6c7eb-2cff-4fe8-a8d9-9b342beac8b6 |
+| 3 | *"How to build a house on a hill. Explain it in step-by-step"* | https://github.com/user-attachments/assets/7e7415ec-f888-4b6f-be30-a211ac3f977e |
+
 ---
+
+
+
 
 ## 🏛️ Modular Architecture (Clean Code & Separation of Concerns)
 
